@@ -1,0 +1,327 @@
+import React, { useState } from 'react';
+
+export default function App() {
+  // 상태 관리
+  const [people, setPeople] = useState([]);
+  const [locations, setLocations] = useState([]);
+  const [results, setResults] = useState(null);
+  const [error, setError] = useState('');
+
+  // 입력 폼 상태
+  const [personName, setPersonName] = useState('');
+  const [personGender, setPersonGender] = useState('남성');
+  const [personHasCar, setPersonHasCar] = useState(false);
+
+  const [locationName, setLocationName] = useState('');
+  const [locationRequiresCar, setLocationRequiresCar] = useState(false);
+
+  // 사람 추가
+  const handleAddPerson = (e) => {
+    e.preventDefault();
+    if (!personName.trim()) return;
+    setPeople([...people, { 
+      id: Date.now(), 
+      name: personName, 
+      gender: personGender, 
+      hasCar: personHasCar 
+    }]);
+    setPersonName('');
+    setPersonHasCar(false);
+    setError('');
+  };
+
+  // 장소 추가
+  const handleAddLocation = (e) => {
+    e.preventDefault();
+    if (!locationName.trim()) return;
+    setLocations([...locations, { 
+      id: Date.now(), 
+      name: locationName, 
+      requiresCar: locationRequiresCar 
+    }]);
+    setLocationName('');
+    setLocationRequiresCar(false);
+    setError('');
+  };
+
+  // 삭제 기능
+  const removePerson = (id) => setPeople(people.filter(p => p.id !== id));
+  const removeLocation = (id) => setLocations(locations.filter(l => l.id !== id));
+
+  // 그룹 생성 로직 (동성 2~3명)
+  const createSameSexGroups = (list) => {
+    let groups = [];
+    let currentList = [...list];
+
+    while (currentList.length > 0) {
+      if (currentList.length % 3 === 0) {
+        groups.push(currentList.splice(0, 3));
+      } else if (currentList.length % 3 === 2) {
+        groups.push(currentList.splice(0, 2));
+      } else if (currentList.length % 3 === 1) {
+        // 남은 인원이 4명이면 2명, 2명으로 나눔 (1명 남는 경우는 사전에 차단됨)
+        groups.push(currentList.splice(0, 2));
+      }
+    }
+    return groups;
+  };
+
+  // 전체 매칭 실행
+  const generateMatching = () => {
+    setError('');
+    setResults(null);
+
+    // 랜덤 섞기
+    let males = people.filter(p => p.gender === '남성').sort(() => Math.random() - 0.5);
+    let females = people.filter(p => p.gender === '여성').sort(() => Math.random() - 0.5);
+
+    // 예외 처리
+    if (people.length === 0) {
+      return setError('참가자를 추가해주세요.');
+    }
+    if (locations.length === 0) {
+      return setError('장소를 최소 1개 이상 추가해주세요.');
+    }
+
+    const M = males.length;
+    const F = females.length;
+
+    // 1. 혼성(여2 남1) 조를 최대로 몇 개 만들 수 있는지 계산
+    let optimalMixCount = -1;
+    const maxPossibleMix = Math.min(M, Math.floor(F / 2));
+
+    for (let mixCount = maxPossibleMix; mixCount >= 0; mixCount--) {
+      const remainM = M - mixCount;
+      const remainF = F - (mixCount * 2);
+      
+      // 혼성을 만들고 남은 인원이 1명이 되면 동성 조(최소 2명)를 만들 수 없으므로 제외
+      if (remainM !== 1 && remainF !== 1) {
+        optimalMixCount = mixCount;
+        break; // 가장 큰 횟수부터 내려오므로, 조건을 만족하면 바로 최적값
+      }
+    }
+
+    if (optimalMixCount === -1) {
+      return setError('현재 인원 비율로는 누군가 1명만 남게 되어 조건에 맞게 조를 짤 수 없습니다. 인원을 추가하거나 조정해주세요.');
+    }
+
+    let allGroups = [];
+
+    // 2. 결정된 횟수만큼 혼성(여2 남1) 조 편성
+    for (let i = 0; i < optimalMixCount; i++) {
+      const m = males.pop();
+      const f1 = females.pop();
+      const f2 = females.pop();
+      allGroups.push({ members: [m, f1, f2], type: '혼성 (여2+남1)' });
+    }
+
+    // 3. 남은 인원은 동성 조로 편성
+    if (males.length > 0) {
+      allGroups.push(...createSameSexGroups(males).map(g => ({ members: g, type: '남성' })));
+    }
+    if (females.length > 0) {
+      allGroups.push(...createSameSexGroups(females).map(g => ({ members: g, type: '여성' })));
+    }
+
+    // 4. 차량 소유 확인 및 장소 매칭
+    let processedGroups = allGroups.map((group, index) => {
+      const hasCar = group.members.some(m => m.hasCar);
+      return { 
+        id: index + 1,
+        ...group, 
+        hasCar, 
+        assignedLocation: null 
+      };
+    });
+
+    const carReqLocs = locations.filter(l => l.requiresCar);
+    const normalLocs = locations.filter(l => !l.requiresCar);
+
+    let carLocIndex = 0;
+    let normalLocIndex = 0;
+
+    for (let group of processedGroups) {
+      if (group.hasCar && carReqLocs.length > 0) {
+        group.assignedLocation = carReqLocs[carLocIndex % carReqLocs.length];
+        carLocIndex++;
+      } else if (normalLocs.length > 0) {
+        group.assignedLocation = normalLocs[normalLocIndex % normalLocs.length];
+        normalLocIndex++;
+      } else if (group.hasCar && normalLocs.length === 0 && carReqLocs.length > 0) {
+         group.assignedLocation = carReqLocs[carLocIndex % carReqLocs.length];
+         carLocIndex++;
+      } else {
+        return setError('차량이 없는 조가 갈 수 있는 일반 장소가 부족합니다. 일반 장소를 추가해주세요.');
+      }
+    }
+
+    setResults(processedGroups);
+  };
+
+  return (
+    <div className="min-h-screen bg-gray-50 p-4 md:p-8 font-sans text-gray-800">
+      <div className="max-w-5xl mx-auto space-y-6">
+        
+        {/* 헤더 */}
+        <header className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 text-center">
+          <h1 className="text-3xl font-bold text-blue-600 mb-2">🚗 스마트 조 편성 & 장소 매칭</h1>
+          <p className="text-gray-500">혼성(여2+남1) 우선 구성 / 나머지 동성 2~3인 / 맞춤 장소 배정</p>
+        </header>
+
+        {error && (
+          <div className="bg-red-50 text-red-600 p-4 rounded-xl border border-red-200 font-medium text-center">
+            ⚠️ {error}
+          </div>
+        )}
+
+        <div className="grid md:grid-cols-2 gap-6">
+          {/* 참가자 입력 섹션 */}
+          <section className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+            <h2 className="text-xl font-bold mb-4 flex items-center">
+              <span className="text-2xl mr-2">👥</span> 참가자 명단 ({people.length}명)
+            </h2>
+            <form onSubmit={handleAddPerson} className="flex gap-2 mb-6 flex-wrap">
+              <input 
+                type="text" 
+                placeholder="이름" 
+                value={personName}
+                onChange={(e) => setPersonName(e.target.value)}
+                className="flex-1 p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 min-w-[100px]"
+              />
+              <select 
+                value={personGender} 
+                onChange={(e) => setPersonGender(e.target.value)}
+                className="p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+              >
+                <option value="남성">남성</option>
+                <option value="여성">여성</option>
+              </select>
+              <label className="flex items-center gap-1 bg-gray-100 px-3 py-2 rounded-lg cursor-pointer hover:bg-gray-200 transition">
+                <input 
+                  type="checkbox" 
+                  checked={personHasCar}
+                  onChange={(e) => setPersonHasCar(e.target.checked)}
+                  className="w-4 h-4 text-blue-600"
+                />
+                <span className="text-sm">차량보유</span>
+              </label>
+              <button type="submit" className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition">
+                추가
+              </button>
+            </form>
+
+            <div className="max-h-60 overflow-y-auto space-y-2 pr-2">
+              {people.map(p => (
+                <div key={p.id} className="flex justify-between items-center bg-gray-50 p-3 rounded-lg border border-gray-100">
+                  <div className="flex items-center gap-3">
+                    <span className={`px-2 py-1 rounded text-xs font-bold ${p.gender === '남성' ? 'bg-blue-100 text-blue-700' : 'bg-pink-100 text-pink-700'}`}>
+                      {p.gender}
+                    </span>
+                    <span className="font-medium">{p.name}</span>
+                    {p.hasCar && <span className="text-xs bg-gray-800 text-white px-2 py-1 rounded-full">🚗 차량</span>}
+                  </div>
+                  <button onClick={() => removePerson(p.id)} className="text-red-400 hover:text-red-600 font-bold px-2">✕</button>
+                </div>
+              ))}
+              {people.length === 0 && <p className="text-center text-gray-400 py-4">등록된 참가자가 없습니다.</p>}
+            </div>
+          </section>
+
+          {/* 장소 입력 섹션 */}
+          <section className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+            <h2 className="text-xl font-bold mb-4 flex items-center">
+              <span className="text-2xl mr-2">📍</span> 장소 목록 ({locations.length}곳)
+            </h2>
+            <form onSubmit={handleAddLocation} className="flex gap-2 mb-6 flex-wrap">
+              <input 
+                type="text" 
+                placeholder="장소명 입력" 
+                value={locationName}
+                onChange={(e) => setLocationName(e.target.value)}
+                className="flex-1 p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400 min-w-[120px]"
+              />
+              <label className="flex items-center gap-1 bg-gray-100 px-3 py-2 rounded-lg cursor-pointer hover:bg-gray-200 transition">
+                <input 
+                  type="checkbox" 
+                  checked={locationRequiresCar}
+                  onChange={(e) => setLocationRequiresCar(e.target.checked)}
+                  className="w-4 h-4 text-green-600"
+                />
+                <span className="text-sm">차량필수</span>
+              </label>
+              <button type="submit" className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition">
+                추가
+              </button>
+            </form>
+
+            <div className="max-h-60 overflow-y-auto space-y-2 pr-2">
+              {locations.map(l => (
+                <div key={l.id} className="flex justify-between items-center bg-gray-50 p-3 rounded-lg border border-gray-100">
+                  <div className="flex items-center gap-3">
+                    <span className="font-medium">{l.name}</span>
+                    {l.requiresCar ? (
+                      <span className="text-xs bg-orange-100 text-orange-700 px-2 py-1 rounded border border-orange-200">차량 전용</span>
+                    ) : (
+                      <span className="text-xs bg-green-100 text-green-700 px-2 py-1 rounded border border-green-200">일반 (대중교통/도보)</span>
+                    )}
+                  </div>
+                  <button onClick={() => removeLocation(l.id)} className="text-red-400 hover:text-red-600 font-bold px-2">✕</button>
+                </div>
+              ))}
+              {locations.length === 0 && <p className="text-center text-gray-400 py-4">등록된 장소가 없습니다.</p>}
+            </div>
+          </section>
+        </div>
+
+        {/* 매칭 실행 버튼 */}
+        <div className="flex justify-center pt-4">
+          <button 
+            onClick={generateMatching}
+            className="bg-indigo-600 hover:bg-indigo-700 text-white text-lg font-bold py-4 px-12 rounded-full shadow-lg transform hover:scale-105 transition duration-200"
+          >
+            ✨ 조 편성 및 장소 매칭하기 ✨
+          </button>
+        </div>
+
+        {/* 결과 화면 */}
+        {results && (
+          <section className="bg-white p-6 md:p-8 rounded-2xl shadow-md border border-indigo-100 mt-8 animate-fade-in">
+            <h2 className="text-2xl font-bold mb-6 text-center text-indigo-900">🎉 매칭 결과 발표 🎉</h2>
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {results.map(group => (
+                <div key={group.id} className="bg-indigo-50 rounded-xl overflow-hidden shadow-sm border border-indigo-100 flex flex-col">
+                  <div className={`p-3 text-white font-bold text-center ${
+                    group.type.includes('남성') ? 'bg-blue-500' : 
+                    group.type.includes('여성') ? 'bg-pink-500' : 
+                    'bg-purple-500'
+                  }`}>
+                    {group.id}조 ({group.type})
+                  </div>
+                  <div className="p-4 flex-1">
+                    <div className="mb-4">
+                      <h4 className="text-sm font-semibold text-gray-500 mb-2">조원 ({group.members.length}명)</h4>
+                      <div className="flex flex-wrap gap-2">
+                        {group.members.map(m => (
+                          <span key={m.id} className="bg-white px-3 py-1 rounded-full text-sm font-medium shadow-sm border border-gray-200">
+                            {m.name} {m.hasCar && '🚗'}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                  <div className="bg-white p-4 border-t border-indigo-100">
+                    <h4 className="text-xs font-semibold text-gray-500 mb-1">배정된 장소</h4>
+                    <div className="font-bold text-lg flex items-center gap-2 text-indigo-800">
+                      📍 {group.assignedLocation?.name}
+                      {group.assignedLocation?.requiresCar && <span className="text-xs font-normal bg-orange-100 text-orange-600 px-2 py-1 rounded">차량필수</span>}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
+      </div>
+    </div>
+  );
+}
