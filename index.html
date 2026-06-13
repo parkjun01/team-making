@@ -14,9 +14,6 @@
   <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
   
-  <!-- Lucide Icons CDN -->
-  <script src="https://unpkg.com/lucide@latest"></script>
-  
   <style>
     @keyframes fadeIn {
       from { opacity: 0; transform: translateY(12px); }
@@ -71,35 +68,89 @@
 
   <!-- React Application 스크립트 -->
   <script type="text/babel">
-    const { useState, useEffect, useRef } = React;
+    const { useState, useEffect, useRef, useMemo } = React;
 
-    // 간단한 Lucide 아이콘 컴포넌트 래퍼 (CDN 아이콘 로드용)
+    // React 친화적 순수 고화질 인라인 SVG 아이콘 맵 (React 렌더링 충돌 완전 방지)
+    const icons = {
+      'help-circle': (
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/>
+        </svg>
+      ),
+      'users': (
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+        </svg>
+      ),
+      'info': (
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/>
+        </svg>
+      ),
+      'user-plus': (
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/>
+        </svg>
+      ),
+      'trash-2': (
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/>
+        </svg>
+      ),
+      'layers': (
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <polygon points="12 2 2 7 12 12 22 7 12 2"/><polygon points="2 17 12 22 22 17"/><polygon points="2 12 12 17 22 12"/>
+        </svg>
+      ),
+      'check': (
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <polyline points="20 6 9 17 4 12"/>
+        </svg>
+      ),
+      'shuffle': (
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <polyline points="16 3 21 3 21 8"/><line x1="4" y1="20" x2="21" y2="3"/><polyline points="21 16 21 21 16 21"/><line x1="15" y1="15" x2="21" y2="21"/><line x1="4" y1="4" x2="9" y2="9"/>
+        </svg>
+      ),
+      'arrow-right': (
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
+        </svg>
+      ),
+      'copy': (
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+        </svg>
+      ),
+      'history': (
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><polyline points="3 3 3 8 8 8"/><line x1="12" y1="7" x2="12" y2="12"/><line x1="12" y1="12" x2="16" y2="14"/>
+        </svg>
+      )
+    };
+
     function Icon({ name, className = "w-5 h-5" }) {
-      useEffect(() => {
-        if (window.lucide) {
-          window.lucide.createIcons();
-        }
-      }, [name]);
-      return <i data-lucide={name} class={`${className} inline-block`}></i>;
+      const svg = icons[name] || null;
+      if (!svg) return null;
+      return React.cloneElement(svg, {
+        className: `${className} inline-block`,
+        stroke: "currentColor"
+      });
     }
 
     function App() {
       const [inputText, setInputText] = useState('');
-      const [names, setNames] = useState([]);
       const [priority, setPriority] = useState('prefer2');
-      const [combinations, setCombinations] = useState([]);
-      
-      // 조합 선택을 고유 ID 문자열 상태로 관리
       const [selectedComboId, setSelectedComboId] = useState('');
       
-      // 추첨 상태 관리
+      // 추첨 단계 및 애니메이션 상태 관리
       const [isShuffling, setIsShuffling] = useState(false);
       const [shuffleStage, setShuffleStage] = useState('idle'); // 'idle' | 'countdown' | 'drawing' | 'done'
       const [countdownNum, setCountdownNum] = useState(3);
       const [currentDrawingName, setCurrentDrawingName] = useState('');
       const [currentDrawingGroup, setCurrentDrawingGroup] = useState(0);
       
-      // 추첨 시뮬레이션용 임시 조 상태
+      // 추첨 가상 배치 보드
       const [revealedGroups, setRevealedGroups] = useState([]); 
       const [finalTargetGroups, setFinalTargetGroups] = useState([]);
 
@@ -112,30 +163,18 @@
       const drawTimerRef = useRef(null);
       const sampleNames = "김은혜 박지성 이사랑 최믿음 정소망 강평화 윤온유 조희망 한신실 신은총";
 
-      // 현재 활성화된 조합 객체 실시간 파싱
-      const activeCombo = combinations.find(c => c.id === selectedComboId) || null;
-
-      // 실시간 이름 파싱 (공백, 줄바꿈 기준)
-      useEffect(() => {
-        const parsed = inputText
+      // 1. 이름 목록 실시간 동기화 계산
+      const names = useMemo(() => {
+        return inputText
           .split(/[\s\n,]+/)
           .map(name => name.trim())
           .filter(name => name.length > 0);
-        setNames(parsed);
-        
-        if (parsed.length >= 2) {
-          setErrorMessage('');
-        }
       }, [inputText]);
 
-      // 수학적 조합 계산 (2x + 3y = N)
-      useEffect(() => {
+      // 2. 수학적 조합 리스트 계산 (2x + 3y = N) -> 실시간 동기 계산식
+      const combinations = useMemo(() => {
         const N = names.length;
-        if (N < 2) {
-          setCombinations([]);
-          setSelectedComboId('');
-          return;
-        }
+        if (N < 2) return [];
 
         const validCombos = [];
         const maxY = Math.floor(N / 3);
@@ -153,26 +192,24 @@
           }
         }
 
-        const sortedCombos = [...validCombos].sort((a, b) => {
+        return [...validCombos].sort((a, b) => {
           if (priority === 'prefer2') {
             return b.groupsOf2 - a.groupsOf2;
           } else {
             return b.groupsOf3 - a.groupsOf3;
           }
         });
-
-        setCombinations(sortedCombos);
-
-        // 현재 선택되어 있는 ID가 변경된 리스트에도 유효한지 검증 후 세팅
-        if (sortedCombos.length > 0) {
-          const isStillValid = sortedCombos.some(c => c.id === selectedComboId);
-          if (!isStillValid) {
-            setSelectedComboId(sortedCombos[0].id);
-          }
-        } else {
-          setSelectedComboId('');
-        }
       }, [names, priority]);
+
+      // 3. 최적의 활성 조합 객체 파싱 (선택 ID가 부적합할 때 자동으로 첫번째 조합으로 안전 복구)
+      const activeCombo = useMemo(() => {
+        if (combinations.length === 0) return null;
+        const found = combinations.find(c => c.id === selectedComboId);
+        return found || combinations[0];
+      }, [combinations, selectedComboId]);
+
+      // 화면 표시용 활성 ID 매칭
+      const activeComboId = activeCombo ? activeCombo.id : '';
 
       const handleLoadSamples = () => setInputText(sampleNames);
       const handleClear = () => {
@@ -181,14 +218,14 @@
         setErrorMessage('');
       };
 
-      // "실시간 뽑기" 시퀀스 시작
+      // 실시간 추첨 무대 가동 시퀀스
       const handleShuffleSequence = () => {
         if (names.length < 2) {
           setErrorMessage('짝을 만들기 위해 최소 2명 이상의 이름을 입력해주세요!');
           return;
         }
         if (!activeCombo) {
-          setErrorMessage('해당 인원수로는 2명 또는 3명으로 구성할 수 없습니다. 인원을 조정해 주세요.');
+          setErrorMessage('해당 인원수로는 2명 또는 3명으로 구성할 수 없습니다. 인원을 확인해 주세요.');
           return;
         }
 
@@ -197,7 +234,7 @@
         setShuffleStage('countdown');
         setCountdownNum(3);
 
-        // 결과 사전 계산
+        // 결과 사전 연산 완료
         const shuffledNames = [...names].sort(() => Math.random() - 0.5);
         const tempTargetGroups = [];
         let pointer = 0;
@@ -215,15 +252,15 @@
           pointer += 2;
         }
 
-        // 전체 조의 순서를 가볍게 섞어 정렬
+        // 각 조 배치 순서도 골고루 섞음
         const finalCalculated = tempTargetGroups.sort(() => Math.random() - 0.5);
         setFinalTargetGroups(finalCalculated);
 
-        // 빈 방 껍데기 세팅
+        // 빈 슬롯 보드 마련
         const emptyLayout = finalCalculated.map(group => Array(group.length).fill(null));
         setRevealedGroups(emptyLayout);
 
-        // 카운트다운 타이머 시작 (3 -> 2 -> 1 -> 시작!)
+        // 카운트다운 가동
         let currentCount = 3;
         const countdownInterval = setInterval(() => {
           currentCount--;
@@ -236,11 +273,11 @@
         }, 700);
       };
 
-      // 이름 하나씩 뽑아서 슬롯에 넣어주기
+      // 느린 간격(1.2초)으로 조별 짝 드로우 진행
       const startLiveDrawing = (targetGroups, initialLayout) => {
         setShuffleStage('drawing');
 
-        // 순서대로 배치할 드로우 스텝 생성
+        // 순서대로 교차 배정할 드로우 단계를 준비
         const drawSteps = [];
         const maxMembers = Math.max(...targetGroups.map(g => g.length));
 
@@ -271,8 +308,7 @@
             }, 250);
 
             stepIndex++;
-            // 1.2초(1200ms) 간격으로 긴장감 있게 한 명씩 공개
-            drawTimerRef.current = setTimeout(drawNext, 1200);
+            drawTimerRef.current = setTimeout(drawNext, 1200); // 1.2초 간격 딜레이
           } else {
             finishDrawing(targetGroups);
           }
@@ -281,7 +317,6 @@
         drawNext();
       };
 
-      // 스킵 기능
       const handleSkipAnimation = () => {
         if (drawTimerRef.current) {
           clearTimeout(drawTimerRef.current);
@@ -289,7 +324,6 @@
         finishDrawing(finalTargetGroups);
       };
 
-      // 최종 매칭 마무리 처리
       const finishDrawing = (targetGroups) => {
         setGroups(targetGroups);
         setIsShuffling(false);
@@ -320,7 +354,6 @@
         };
       }, []);
 
-      // 결과 클립보드 복사
       const handleCopyToClipboard = () => {
         if (groups.length === 0) return;
 
@@ -436,7 +469,7 @@
                       {combinations.length > 0 ? (
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                           {combinations.map((combo) => {
-                            const isSelected = selectedComboId === combo.id;
+                            const isSelected = activeComboId === combo.id;
                             return (
                               <button
                                 key={combo.id}
@@ -503,7 +536,7 @@
                   </div>
                   <button 
                     onClick={handleSkipAnimation}
-                    class="text-xs bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold px-3.5 py-2 rounded-xl transition-all cursor-pointer flex items-center gap-1.5"
+                    class="text-xs bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold px-3.5 py-2 rounded-xl transition-all cursor-pointer flex items-center gap-1.5 font-medium"
                   >
                     <Icon name="arrow-right" className="w-3.5 h-3.5" />
                     바로 결과 보기 (Skip)
@@ -647,7 +680,7 @@
                     </h2>
                     <p class="text-xs text-slate-500 mt-1">총 {names.length}명이 공정한 절차를 거쳐 조로 완벽히 배정되었습니다.</p>
                   </div>
-                  <button onClick={handleCopyToClipboard} class="flex items-center gap-1.5 text-sm font-bold px-4 py-2.5 rounded-xl border transition-all bg-white text-slate-700 border-slate-200 hover:bg-slate-50 cursor-pointer">
+                  <button onClick={handleCopyToClipboard} class="flex items-center gap-1.5 text-sm font-bold px-4 py-2.5 rounded-xl border transition-all bg-white text-slate-700 border-slate-200 hover:bg-slate-50 cursor-pointer font-medium">
                     <Icon name={copied ? "check" : "copy"} className={copied ? "text-emerald-600" : "text-slate-500"} />
                     {copied ? '복사 완료!' : '전체 결과 복사'}
                   </button>
@@ -666,7 +699,7 @@
                       <div key={index} class={`bg-gradient-to-br ${scheme} border rounded-2xl p-5 shadow-sm hover:scale-[1.01] transition-transform duration-200`}>
                         <div class="flex items-center justify-between mb-3.5">
                           <span class="text-base font-extrabold flex items-center gap-1.5">👥 {index + 1}조</span>
-                          <span class="text-xs font-bold px-2.5 py-1 bg-white/80 rounded-full border border-black/5 text-slate-700">{group.length}명 짝</span>
+                          <span class="text-xs font-bold px-2.5 py-1 bg-white/80 rounded-full border border-black/5 text-slate-700 font-semibold">{group.length}명 짝</span>
                         </div>
                         <div class="flex flex-wrap gap-2">
                           {group.map((member, mIdx) => (
