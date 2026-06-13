@@ -1,4 +1,3 @@
-```html
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -84,11 +83,11 @@
     }
 
     function App() {
+      // 1. 기초 상태 변수 정의 (안전한 컴파일을 위해 상단에 전면 배치)
       const [inputText, setInputText] = useState('');
       const [names, setNames] = useState([]);
       const [priority, setPriority] = useState('prefer2');
-      
-      // 조합 선택을 고유 ID 문자열 상태로 관리
+      const [combinations, setCombinations] = useState([]);
       const [selectedComboId, setSelectedComboId] = useState('');
       
       // 추첨 상태 관리
@@ -111,8 +110,10 @@
       const drawTimerRef = useRef(null);
       const sampleNames = "김은혜 박지성 이사랑 최믿음 정소망 강평화 윤온유 조희망 한신실 신은총";
 
-      // 현재 활성화된 조합 객체 실시간 파싱
-      const activeCombo = combinations.find(c => c.id === selectedComboId) || null;
+      // 현재 활성화된 조합 객체 실시간 파싱 (에러 예방용 안전 가드)
+      const activeCombo = (combinations && combinations.length > 0) 
+        ? (combinations.find(c => c.id === selectedComboId) || combinations[0]) 
+        : null;
 
       // 실시간 이름 파싱 (공백, 줄바꿈 기준)
       useEffect(() => {
@@ -162,7 +163,7 @@
 
         setCombinations(sortedCombos);
 
-        // 현재 선택되어 있는 ID가 변경된 리스트에도 유효한지 검증 후 세팅
+        // 현재 선택되어 있는 ID가 변경된 리스트에도 유효한지 검증 후 안전하게 세팅
         if (sortedCombos.length > 0) {
           const isStillValid = sortedCombos.some(c => c.id === selectedComboId);
           if (!isStillValid) {
@@ -222,7 +223,7 @@
         const emptyLayout = finalCalculated.map(group => Array(group.length).fill(null));
         setRevealedGroups(emptyLayout);
 
-        // 카운트다운 타이머 시작 (3 -> 2 -> 1 -> 시작!)
+        // 카운트다운 타이머 시작
         let currentCount = 3;
         const countdownInterval = setInterval(() => {
           currentCount--;
@@ -235,11 +236,10 @@
         }, 700);
       };
 
-      // 이름 하나씩 뽑아서 슬롯에 넣어주기 시뮬레이터
+      // 이름 하나씩 뽑아서 슬롯에 넣어주기 시뮬레이터 (1.2초 간격 조율 완료)
       const startLiveDrawing = (targetGroups, initialLayout) => {
         setShuffleStage('drawing');
 
-        // 순서대로 배치할 드로우 스텝 생성 (각 조에 대원들이 골고루 하나씩 뽑히도록 교차 배치)
         const drawSteps = [];
         const maxMembers = Math.max(...targetGroups.map(g => g.length));
 
@@ -264,17 +264,16 @@
             setCurrentDrawingName(step.name);
             setCurrentDrawingGroup(step.groupIdx);
 
-            // 약 250ms 후에 칠판에 해당 대원의 이름을 착륙시켜 시각적 충격을 줍니다.
+            // 이름이 카드 슬롯 내부 안개 효과를 걷어내며 안착하는 정밀 타이밍(250ms)
             setTimeout(() => {
               currentRevealed[step.groupIdx][step.memberIdx] = step.name;
               setRevealedGroups(currentRevealed.map(arr => [...arr]));
             }, 250);
 
             stepIndex++;
-            // 다음 인원 드로우 속도: 600ms에서 1200ms(1.2초)로 늦춰 더 긴장감 있고 부드러운 구성을 보여줍니다.
+            // 기존 0.6초에서 1.2초(1200ms)로 늦춤으로써 확실하고 극적인 롤링 감상 환경 제공
             drawTimerRef.current = setTimeout(drawNext, 1200);
           } else {
-            // 모든 대원 추첨이 정상 종료되었을 때
             finishDrawing(targetGroups);
           }
         };
@@ -379,7 +378,7 @@
             {showGuide && !isShuffling && (
               <div class="bg-gradient-to-r from-teal-50 to-emerald-50 border border-teal-100 rounded-2xl p-5 shadow-sm animate-fadeIn">
                 <div class="flex items-start gap-3">
-                  <Icon name="info" className="w-5 h-5 text-teal-600 mt-0.5 shrink-0" />
+                  <Info class="w-5 h-5 text-teal-600 mt-0.5 shrink-0" name="info" />
                   <div>
                     <h3 class="font-bold text-teal-800 text-base mb-1">💡 동역자 추첨 안내</h3>
                     <ul class="text-teal-700 text-sm space-y-1 list-disc pl-4 leading-relaxed">
@@ -434,7 +433,7 @@
                         가능한 조 조합 선택 ({names.length}명 기준)
                       </div>
 
-                      {combinations.length > 0 ? (
+                      {combinations && combinations.length > 0 ? (
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                           {combinations.map((combo) => {
                             const isSelected = selectedComboId === combo.id;
@@ -572,7 +571,7 @@
                       </div>
                       
                       <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        {revealedGroups.map((groupSlots, gIdx) => {
+                        {revealedGroups && revealedGroups.map((groupSlots, gIdx) => {
                           const isActiveTarget = currentDrawingName && currentDrawingGroup === gIdx;
                           return (
                             <div 
@@ -589,12 +588,12 @@
                                   {gIdx + 1}조
                                 </span>
                                 <span class="text-[10px] bg-slate-800 text-slate-300 px-2 py-0.5 rounded-full border border-slate-700">
-                                  {groupSlots.length}인조 슬롯
+                                  {groupSlots ? groupSlots.length : 0}인조 슬롯
                                 </span>
                               </div>
 
                               <div class="flex flex-col gap-2">
-                                {groupSlots.map((member, mIdx) => {
+                                {groupSlots && groupSlots.map((member, mIdx) => {
                                   if (member) {
                                     return (
                                       <div 
@@ -638,7 +637,7 @@
             )}
 
             {/* ==================== [ 최종 매칭 결과 카드 ] ==================== */}
-            {!isShuffling && groups.length > 0 && (
+            {!isShuffling && groups && groups.length > 0 && (
               <div class="bg-white rounded-2xl border border-slate-200 shadow-md p-5 md:p-6 animate-fadeIn">
                 <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between pb-4 mb-5 border-b border-slate-100 gap-3">
                   <div>
@@ -685,7 +684,7 @@
             )}
 
             {/* 세션 히스토리 */}
-            {history.length > 0 && !isShuffling && (
+            {history && history.length > 0 && !isShuffling && (
               <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-5 md:p-6 animate-fadeIn">
                 <h3 class="text-sm font-bold text-slate-600 mb-4 flex items-center gap-1.5">
                   <Icon name="history" className="text-indigo-500" />
@@ -719,5 +718,3 @@
   </script>
 </body>
 </html>
-
-```
