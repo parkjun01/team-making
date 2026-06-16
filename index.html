@@ -1,4 +1,3 @@
-```html
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -6,10 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>전도짝만들기</title>
   
-  <!-- Tailwind CSS CDN -->
-  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
   
-  <!-- React 및 Babel CDN -->
   <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
   <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
@@ -66,7 +63,6 @@
 
   <div id="root"></div>
 
-  <!-- React Application 스크립트 -->
   <script type="text/babel">
     const { useState, useEffect, useRef, useMemo } = React;
 
@@ -383,38 +379,38 @@
       };
 
       return (
-        <div class="flex flex-col min-h-screen">
+        <div className="flex flex-col min-h-screen">
           {/* 상단 헤더 */}
-          <header class="bg-gradient-to-r from-teal-600 via-emerald-600 to-indigo-600 text-white shadow-md">
-            <div class="max-w-4xl mx-auto px-4 py-6 md:py-8 text-center relative">
-              <div class="absolute right-4 top-4">
-                <button onClick={() => setShowGuide(!showGuide)} class="p-2 bg-white/10 hover:bg-white/20 transition-all rounded-full cursor-pointer">
+          <header className="bg-gradient-to-r from-teal-600 via-emerald-600 to-indigo-600 text-white shadow-md">
+            <div className="max-w-4xl mx-auto px-4 py-6 md:py-8 text-center relative">
+              <div className="absolute right-4 top-4">
+                <button onClick={() => setShowGuide(!showGuide)} className="p-2 bg-white/10 hover:bg-white/20 transition-all rounded-full cursor-pointer">
                   <Icon name="help-circle" />
                 </button>
               </div>
-              <div class="flex items-center justify-center gap-2 mb-2">
-                <span class="p-2 bg-white/20 rounded-xl backdrop-blur-sm">
+              <div className="flex items-center justify-center gap-2 mb-2">
+                <span className="p-2 bg-white/20 rounded-xl backdrop-blur-sm">
                   <Icon name="users" className="w-7 h-7 text-yellow-300 animate-pulse" />
                 </span>
-                <h1 class="text-3xl md:text-4xl font-extrabold tracking-tight">전도짝만들기</h1>
+                <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight">전도짝만들기</h1>
               </div>
-              <p class="text-emerald-100 text-sm md:text-base mt-1 font-medium">
+              <p className="text-emerald-100 text-sm md:text-base mt-1 font-medium">
                 최소 2명, 최대 3명으로 구성되는 믿음의 최적 동역자 매칭 플랫폼 👥
               </p>
             </div>
           </header>
 
           {/* 메인 영역 */}
-          <main class="flex-grow max-w-4xl w-full mx-auto px-4 py-6 flex flex-col gap-4 md:gap-6">
+          <main className="flex-grow max-w-4xl w-full mx-auto px-4 py-6 flex flex-col gap-4 md:gap-6">
             
             {/* 가이드 창 */}
             {showGuide && !isShuffling && (
-              <div class="bg-gradient-to-r from-teal-50 to-emerald-50 border border-teal-100 rounded-2xl p-5 shadow-sm animate-fadeIn">
-                <div class="flex items-start gap-3">
+              <div className="bg-gradient-to-r from-teal-50 to-emerald-50 border border-teal-100 rounded-2xl p-5 shadow-sm animate-fadeIn">
+                <div className="flex items-start gap-3">
                   <Icon name="info" className="w-5 h-5 text-teal-600 mt-0.5 shrink-0" />
                   <div>
-                    <h3 class="font-bold text-teal-800 text-base mb-1">💡 동역자 추첨 안내</h3>
-                    <ul class="text-teal-700 text-sm space-y-1 list-disc pl-4 leading-relaxed">
+                    <h3 className="font-bold text-teal-800 text-base mb-1">💡 동역자 추첨 안내</h3>
+                    <ul className="text-teal-700 text-sm space-y-1 list-disc pl-4 leading-relaxed">
                       <li>모든 인원은 <strong>최소 2명에서 최대 3명</strong>으로만 남김없이 매칭됩니다.</li>
                       <li>이름은 입력창에 <strong>공백(띄어쓰기)</strong>이나 <strong>줄바꿈</strong>으로 구분해서 편하게 작성해 주세요.</li>
                       <li>임의로 조 짜기 버튼을 클릭하면 한 명씩 이름이 날아가 조를 구성하는 <strong>추첨 쇼 애니메이션</strong>이 시작됩니다!</li>
@@ -426,33 +422,33 @@
 
             {/* 메인 제어부 */}
             {!isShuffling && (
-              <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-5 md:p-6 animate-fadeIn">
-                <div class="flex flex-col gap-4">
-                  <div class="flex items-center justify-between">
-                    <label class="text-base font-bold text-slate-700 flex items-center gap-2">
+              <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-5 md:p-6 animate-fadeIn">
+                <div className="flex flex-col gap-4">
+                  <div className="flex items-center justify-between">
+                    <label className="text-base font-bold text-slate-700 flex items-center gap-2">
                       <Icon name="user-plus" className="text-teal-600" />
                       전도 대원 명단 입력
                     </label>
-                    <div class="flex gap-2">
-                      <button onClick={handleLoadSamples} class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-600 px-3 py-1.5 rounded-lg font-semibold border border-slate-200 cursor-pointer font-medium">
+                    <div className="flex gap-2">
+                      <button onClick={handleLoadSamples} className="text-xs bg-slate-100 hover:bg-slate-200 text-slate-600 px-3 py-1.5 rounded-lg font-semibold border border-slate-200 cursor-pointer">
                         ✨ 샘플 이름 입력
                       </button>
-                      <button onClick={handleClear} class="text-xs bg-red-50 hover:bg-red-100 text-red-600 px-2.5 py-1.5 rounded-lg font-semibold flex items-center gap-1 cursor-pointer font-medium">
+                      <button onClick={handleClear} className="text-xs bg-red-50 hover:bg-red-100 text-red-600 px-2.5 py-1.5 rounded-lg font-semibold flex items-center gap-1 cursor-pointer">
                         <Icon name="trash-2" className="w-3.5 h-3.5" />
                         지우기
                       </button>
                     </div>
                   </div>
 
-                  <div class="relative">
+                  <div className="relative">
                     <textarea
                       value={inputText}
                       onChange={(e) => setInputText(e.target.value)}
                       placeholder="대원들의 이름을 공백(띄어쓰기) 또는 엔터로 구분하여 넣어주세요. 예: 김사랑 박동역 이은혜 최믿음"
-                      class="w-full h-32 md:h-36 p-4 border border-slate-200 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-teal-500 text-slate-800 placeholder-slate-400 outline-none transition-all resize-none font-medium leading-relaxed"
+                      className="w-full h-32 md:h-36 p-4 border border-slate-200 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-teal-500 text-slate-800 placeholder-slate-400 outline-none transition-all resize-none font-medium leading-relaxed"
                     />
                     {names.length > 0 && (
-                      <div class="absolute bottom-3 right-3 bg-teal-50 text-teal-700 text-xs font-bold px-2.5 py-1 rounded-md border border-teal-200">
+                      <div className="absolute bottom-3 right-3 bg-teal-50 text-teal-700 text-xs font-bold px-2.5 py-1 rounded-md border border-teal-200">
                         현재 입력: {names.length}명
                       </div>
                     )}
@@ -460,14 +456,14 @@
 
                   {/* 조합 선택 영역 */}
                   {names.length >= 2 && (
-                    <div class="bg-slate-50 rounded-xl p-4 border border-slate-200/60 animate-fadeIn">
-                      <div class="text-sm font-bold text-slate-700 mb-3 flex items-center gap-1.5">
+                    <div className="bg-slate-50 rounded-xl p-4 border border-slate-200/60 animate-fadeIn">
+                      <div className="text-sm font-bold text-slate-700 mb-3 flex items-center gap-1.5">
                         <Icon name="layers" className="text-teal-600 w-4.5 h-4.5" />
                         가능한 조 조합 선택 ({names.length}명 기준)
                       </div>
 
                       {combinations.length > 0 ? (
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                           {combinations.map((combo) => {
                             const isSelected = activeComboId === combo.id;
                             return (
@@ -475,17 +471,17 @@
                                 key={combo.id}
                                 type="button"
                                 onClick={() => setSelectedComboId(combo.id)}
-                                class={`flex items-center justify-between p-3.5 rounded-xl border text-left transition-all cursor-pointer ${
+                                className={`flex items-center justify-between p-3.5 rounded-xl border text-left transition-all cursor-pointer ${
                                   isSelected 
                                     ? 'border-teal-500 bg-teal-50/70 ring-2 ring-teal-500/20 text-teal-900 font-semibold shadow-sm' 
                                     : 'border-slate-200 bg-white hover:border-slate-300 text-slate-700'
                                 }`}
                               >
-                                <div class="flex flex-col gap-0.5">
-                                  <span class="font-bold text-sm">2인조 {combo.groupsOf2}개 + 3인조 {combo.groupsOf3}개</span>
-                                  <span class="text-xs text-slate-500 font-medium">총 {combo.totalGroups}개 조 편성</span>
+                                <div className="flex flex-col gap-0.5">
+                                  <span className="font-bold text-sm">2인조 {combo.groupsOf2}개 + 3인조 {combo.groupsOf3}개</span>
+                                  <span className="text-xs text-slate-500 font-medium">총 {combo.totalGroups}개 조 편성</span>
                                 </div>
-                                <div class={`w-5 h-5 rounded-full border flex items-center justify-center transition-all ${isSelected ? 'border-teal-600 bg-teal-600 text-white' : 'border-slate-300 bg-slate-50'}`}>
+                                <div className={`w-5 h-5 rounded-full border flex items-center justify-center transition-all ${isSelected ? 'border-teal-600 bg-teal-600 text-white' : 'border-slate-300 bg-slate-50'}`}>
                                   {isSelected && <Icon name="check" className="w-3.5 h-3.5" />}
                                 </div>
                               </button>
@@ -493,31 +489,31 @@
                           })}
                         </div>
                       ) : (
-                        <div class="text-xs text-rose-600 font-semibold p-2 bg-rose-50 rounded-lg">
+                        <div className="text-xs text-rose-600 font-semibold p-2 bg-rose-50 rounded-lg">
                           ⚠️ 완벽히 나눌 수 없는 인원수입니다. 인원을 추가하거나 조정해 주세요.
                         </div>
                       )}
 
-                      <div class="flex items-center gap-4 mt-4 pt-3 border-t border-slate-200/60 text-xs text-slate-500">
-                        <span class="font-bold text-slate-600">정렬 필터:</span>
-                        <div class="flex gap-2">
-                          <button type="button" onClick={() => setPriority('prefer2')} class={`px-3 py-1.5 rounded-md font-semibold cursor-pointer transition-colors ${priority === 'prefer2' ? 'bg-teal-600 text-white' : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-100'}`}>2인조 중심</button>
-                          <button type="button" onClick={() => setPriority('prefer3')} class={`px-3 py-1.5 rounded-md font-semibold cursor-pointer transition-colors ${priority === 'prefer3' ? 'bg-indigo-600 text-white' : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-100'}`}>3인조 중심</button>
+                      <div className="flex items-center gap-4 mt-4 pt-3 border-t border-slate-200/60 text-xs text-slate-500">
+                        <span className="font-bold text-slate-600">정렬 필터:</span>
+                        <div className="flex gap-2">
+                          <button type="button" onClick={() => setPriority('prefer2')} className={`px-3 py-1.5 rounded-md font-semibold cursor-pointer transition-colors ${priority === 'prefer2' ? 'bg-teal-600 text-white' : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-100'}`}>2인조 중심</button>
+                          <button type="button" onClick={() => setPriority('prefer3')} className={`px-3 py-1.5 rounded-md font-semibold cursor-pointer transition-colors ${priority === 'prefer3' ? 'bg-indigo-600 text-white' : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-100'}`}>3인조 중심</button>
                         </div>
                       </div>
                     </div>
                   )}
 
-                  {errorMessage && <div class="bg-red-50 text-red-700 text-sm p-3.5 rounded-xl border border-red-100 font-medium">⚠️ {errorMessage}</div>}
+                  {errorMessage && <div className="bg-red-50 text-red-700 text-sm p-3.5 rounded-xl border border-red-100 font-medium">⚠️ {errorMessage}</div>}
 
                   <button
                     onClick={handleShuffleSequence}
                     disabled={names.length < 2 || !activeCombo}
-                    class={`w-full py-4 rounded-xl font-bold text-lg shadow-sm transition-all transform flex items-center justify-center gap-2 cursor-pointer ${
+                    className={`w-full py-4 rounded-xl font-bold text-lg shadow-sm transition-all transform flex items-center justify-center gap-2 cursor-pointer ${
                       names.length < 2 || !activeCombo ? 'bg-slate-200 text-slate-400 cursor-not-allowed' : 'bg-gradient-to-r from-teal-500 via-emerald-600 to-indigo-600 hover:opacity-95 text-white hover:shadow-md hover:-translate-y-0.5 active:translate-y-0'
                     }`}
                   >
-                    <Icon name="shuffle" class="w-5 h-5" />
+                    <Icon name="shuffle" className="w-5 h-5" />
                     추첨 시작! 🎲
                   </button>
                 </div>
@@ -526,17 +522,17 @@
 
             {/* ==================== [ 실시간 추첨 무대 극장 ] ==================== */}
             {isShuffling && (
-              <div class="bg-slate-900 text-slate-100 rounded-3xl border border-slate-800 shadow-2xl p-6 md:p-8 flex flex-col gap-6 animate-fadeIn">
+              <div className="bg-slate-900 text-slate-100 rounded-3xl border border-slate-800 shadow-2xl p-6 md:p-8 flex flex-col gap-6 animate-fadeIn">
                 
                 {/* 상단 진행 정보바 */}
-                <div class="flex items-center justify-between border-b border-slate-800 pb-4">
-                  <div class="flex items-center gap-2">
-                    <span class="w-3.5 h-3.5 rounded-full bg-red-500 animate-ping"></span>
-                    <span class="text-sm font-semibold text-teal-400 tracking-wider">LIVE DRAW STAGE</span>
+                <div className="flex items-center justify-between border-b border-slate-800 pb-4">
+                  <div className="flex items-center gap-2">
+                    <span className="w-3.5 h-3.5 rounded-full bg-red-500 animate-ping"></span>
+                    <span className="text-sm font-semibold text-teal-400 tracking-wider">LIVE DRAW STAGE</span>
                   </div>
                   <button 
                     onClick={handleSkipAnimation}
-                    class="text-xs bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold px-3.5 py-2 rounded-xl transition-all cursor-pointer flex items-center gap-1.5 font-medium"
+                    className="text-xs bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold px-3.5 py-2 rounded-xl transition-all cursor-pointer flex items-center gap-1.5 font-medium"
                   >
                     <Icon name="arrow-right" className="w-3.5 h-3.5" />
                     바로 결과 보기 (Skip)
@@ -545,50 +541,50 @@
 
                 {/* 카운트다운 스테이지 */}
                 {shuffleStage === 'countdown' && (
-                  <div class="py-12 flex flex-col items-center justify-center text-center gap-4">
-                    <div class="text-sm text-slate-400 font-semibold uppercase tracking-widest">준비 해주세요</div>
-                    <div class="text-7xl font-extrabold text-teal-400 tracking-tight scale-110 transition-transform duration-300 animate-bounce">
+                  <div className="py-12 flex flex-col items-center justify-center text-center gap-4">
+                    <div className="text-sm text-slate-400 font-semibold uppercase tracking-widest">준비 해주세요</div>
+                    <div className="text-7xl font-extrabold text-teal-400 tracking-tight scale-110 transition-transform duration-300 animate-bounce">
                       {countdownNum}
                     </div>
-                    <p class="text-xs text-slate-500">은혜로운 매칭을 시작합니다!</p>
+                    <p className="text-xs text-slate-500">은혜로운 매칭을 시작합니다!</p>
                   </div>
                 )}
 
                 {/* 이름 비행 드로우 스테이지 */}
                 {shuffleStage === 'drawing' && (
-                  <div class="flex flex-col gap-6">
+                  <div className="flex flex-col gap-6">
                     
                     {/* 뽑기 통 & 뽑힌 이름 연출 */}
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 bg-slate-950 p-6 rounded-2xl border border-slate-800 relative overflow-hidden">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 bg-slate-950 p-6 rounded-2xl border border-slate-800 relative overflow-hidden">
                       
                       {/* 좌측: 흔들리는 추첨함 */}
-                      <div class="flex flex-col items-center justify-center p-4 border-r border-slate-800/60 relative">
-                        <div class="absolute text-2xl top-4 left-6 opacity-20 animate-bounce">🎈</div>
-                        <div class="absolute text-xl bottom-6 right-8 opacity-20 animate-pulse">✨</div>
+                      <div className="flex flex-col items-center justify-center p-4 border-r border-slate-800/60 relative">
+                        <div className="absolute text-2xl top-4 left-6 opacity-20 animate-bounce">🎈</div>
+                        <div className="absolute text-xl bottom-6 right-8 opacity-20 animate-pulse">✨</div>
                         
-                        <div class="text-5xl mb-4 animate-shakeBox inline-block">
+                        <div className="text-5xl mb-4 animate-shakeBox inline-block">
                           🗳️
                         </div>
-                        <h4 class="text-sm font-bold text-slate-400 tracking-tight mb-1">축 전도짝 추첨함</h4>
-                        <p class="text-xs text-slate-500">상자 안에서 대원들의 파트너를 찾는 중...</p>
+                        <h4 className="text-sm font-bold text-slate-400 tracking-tight mb-1">축 전도짝 추첨함</h4>
+                        <p className="text-xs text-slate-500">상자 안에서 대원들의 파트너를 찾는 중...</p>
                       </div>
 
                       {/* 우측: 방금 뽑힌 이름 공중 부양 보드 */}
-                      <div class="flex flex-col items-center justify-center p-4 min-h-[160px] relative">
+                      <div className="flex flex-col items-center justify-center p-4 min-h-[160px] relative">
                         {currentDrawingName ? (
-                          <div class="text-center animate-flyDrawn flex flex-col items-center gap-2">
-                            <span class="text-xs bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 font-bold px-3 py-1 rounded-full animate-pulse">
+                          <div className="text-center animate-flyDrawn flex flex-col items-center gap-2">
+                            <span className="text-xs bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 font-bold px-3 py-1 rounded-full animate-pulse">
                               🎯 대원 뽑힘!
                             </span>
-                            <div class="text-3xl md:text-4xl font-extrabold text-white tracking-wide flex items-center gap-2">
+                            <div className="text-3xl md:text-4xl font-extrabold text-white tracking-wide flex items-center gap-2">
                               {currentDrawingName}
                             </div>
-                            <span class="text-xs text-slate-400 mt-1 font-medium">
-                              👉 <strong class="text-teal-400">{currentDrawingGroup + 1}조</strong>로 비행 중...
+                            <span className="text-xs text-slate-400 mt-1 font-medium">
+                              👉 <strong className="text-teal-400">{currentDrawingGroup + 1}조</strong>로 비행 중...
                             </span>
                           </div>
                         ) : (
-                          <div class="text-slate-500 text-sm font-semibold flex items-center gap-2 animate-pulse">
+                          <div className="text-slate-500 text-sm font-semibold flex items-center gap-2 animate-pulse">
                             <Icon name="shuffle" />
                             공정한 조력 매칭 진행 중...
                           </div>
@@ -598,46 +594,46 @@
 
                     {/* 실시간으로 채워지고 있는 조 현황판 */}
                     <div>
-                      <div class="text-xs font-bold text-slate-400 mb-3 tracking-widest flex items-center gap-1.5">
+                      <div className="text-xs font-bold text-slate-400 mb-3 tracking-widest flex items-center gap-1.5">
                         <Icon name="layers" className="w-4 h-4 text-teal-400" />
                         실시간 배정 현황판 (2~3인 구성)
                       </div>
                       
-                      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         {revealedGroups.map((groupSlots, gIdx) => {
                           const isActiveTarget = currentDrawingName && currentDrawingGroup === gIdx;
                           return (
                             <div 
                               key={gIdx} 
-                              class={`p-4 rounded-xl border transition-all duration-300 ${
+                              className={`p-4 rounded-xl border transition-all duration-300 ${
                                 isActiveTarget 
                                   ? 'bg-slate-800/80 border-teal-500 shadow-[0_0_15px_rgba(20,184,166,0.15)] scale-[1.01]' 
                                   : 'bg-slate-950/60 border-slate-800'
                               }`}
                             >
-                              <div class="flex items-center justify-between mb-3 text-xs font-bold text-slate-400">
-                                <span class="flex items-center gap-1.5">
-                                  <span class={`w-1.5 h-3 rounded-full ${isActiveTarget ? 'bg-teal-400 animate-pulse' : 'bg-slate-600'}`}></span>
+                              <div className="flex items-center justify-between mb-3 text-xs font-bold text-slate-400">
+                                <span className="flex items-center gap-1.5">
+                                  <span className={`w-1.5 h-3 rounded-full ${isActiveTarget ? 'bg-teal-400 animate-pulse' : 'bg-slate-600'}`}></span>
                                   {gIdx + 1}조
                                 </span>
-                                <span class="text-[10px] bg-slate-800 text-slate-300 px-2 py-0.5 rounded-full border border-slate-700 font-medium">
+                                <span className="text-[10px] bg-slate-800 text-slate-300 px-2 py-0.5 rounded-full border border-slate-700 font-medium">
                                   {groupSlots.length}인조 슬롯
                                 </span>
                               </div>
 
-                              <div class="flex flex-col gap-2">
+                              <div className="flex flex-col gap-2">
                                 {groupSlots.map((member, mIdx) => {
                                   if (member) {
                                     return (
                                       <div 
                                         key={mIdx} 
-                                        class="px-3.5 py-2.5 bg-slate-800 rounded-lg text-sm font-bold text-slate-100 flex items-center justify-between border border-slate-700/50 animate-popIn"
+                                        className="px-3.5 py-2.5 bg-slate-800 rounded-lg text-sm font-bold text-slate-100 flex items-center justify-between border border-slate-700/50 animate-popIn"
                                       >
-                                        <span class="flex items-center gap-2">
-                                          <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+                                        <span className="flex items-center gap-2">
+                                          <span className="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
                                           {member}
                                         </span>
-                                        <span class="text-[10px] text-emerald-400 flex items-center gap-0.5 font-medium">
+                                        <span className="text-[10px] text-emerald-400 flex items-center gap-0.5 font-medium">
                                           <Icon name="check" className="w-3 h-3" /> 배정됨
                                         </span>
                                       </div>
@@ -646,13 +642,13 @@
                                     return (
                                       <div 
                                         key={mIdx} 
-                                        class="px-3.5 py-2.5 rounded-lg text-sm font-bold text-slate-600 border border-dashed border-slate-800 flex items-center justify-between bg-slate-900/30 animate-pulseSoft"
+                                        className="px-3.5 py-2.5 rounded-lg text-sm font-bold text-slate-600 border border-dashed border-slate-800 flex items-center justify-between bg-slate-900/30 animate-pulseSoft"
                                       >
-                                        <span class="flex items-center gap-2">
-                                          <span class="w-1.5 h-1.5 rounded-full bg-slate-800"></span>
+                                        <span className="flex items-center gap-2">
+                                          <span className="w-1.5 h-1.5 rounded-full bg-slate-800"></span>
                                           대기 중...
                                         </span>
-                                        <span class="text-xs font-medium">?</span>
+                                        <span className="text-xs font-medium">?</span>
                                       </div>
                                     );
                                   }
@@ -671,22 +667,22 @@
 
             {/* ==================== [ 최종 매칭 결과 카드 ] ==================== */}
             {!isShuffling && groups.length > 0 && (
-              <div class="bg-white rounded-2xl border border-slate-200 shadow-md p-5 md:p-6 animate-fadeIn">
-                <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between pb-4 mb-5 border-b border-slate-100 gap-3">
+              <div className="bg-white rounded-2xl border border-slate-200 shadow-md p-5 md:p-6 animate-fadeIn">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between pb-4 mb-5 border-b border-slate-100 gap-3">
                   <div>
-                    <h2 class="text-xl font-extrabold text-slate-800 flex items-center gap-2">
-                      <span class="w-2.5 h-6 bg-teal-500 rounded-full inline-block animate-pulse"></span>
+                    <h2 className="text-xl font-extrabold text-slate-800 flex items-center gap-2">
+                      <span className="w-2.5 h-6 bg-teal-500 rounded-full inline-block animate-pulse"></span>
                       매칭 완료 👏
                     </h2>
-                    <p class="text-xs text-slate-500 mt-1">총 {names.length}명이 공정한 절차를 거쳐 조로 완벽히 배정되었습니다.</p>
+                    <p className="text-xs text-slate-500 mt-1">총 {names.length}명이 공정한 절차를 거쳐 조로 완벽히 배정되었습니다.</p>
                   </div>
-                  <button onClick={handleCopyToClipboard} class="flex items-center gap-1.5 text-sm font-bold px-4 py-2.5 rounded-xl border transition-all bg-white text-slate-700 border-slate-200 hover:bg-slate-50 cursor-pointer font-medium">
+                  <button onClick={handleCopyToClipboard} className="flex items-center gap-1.5 text-sm font-bold px-4 py-2.5 rounded-xl border transition-all bg-white text-slate-700 border-slate-200 hover:bg-slate-50 cursor-pointer">
                     <Icon name={copied ? "check" : "copy"} className={copied ? "text-emerald-600" : "text-slate-500"} />
                     {copied ? '복사 완료!' : '전체 결과 복사'}
                   </button>
                 </div>
 
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   {groups.map((group, index) => {
                     const colorSchemes = [
                       'from-teal-50 to-emerald-50/40 border-teal-100 text-teal-800',
@@ -696,15 +692,15 @@
                     ];
                     const scheme = colorSchemes[index % colorSchemes.length];
                     return (
-                      <div key={index} class={`bg-gradient-to-br ${scheme} border rounded-2xl p-5 shadow-sm hover:scale-[1.01] transition-transform duration-200`}>
-                        <div class="flex items-center justify-between mb-3.5">
-                          <span class="text-base font-extrabold flex items-center gap-1.5">👥 {index + 1}조</span>
-                          <span class="text-xs font-bold px-2.5 py-1 bg-white/80 rounded-full border border-black/5 text-slate-700 font-semibold">{group.length}명 짝</span>
+                      <div key={index} className={`bg-gradient-to-br ${scheme} border rounded-2xl p-5 shadow-sm hover:scale-[1.01] transition-transform duration-200`}>
+                        <div className="flex items-center justify-between mb-3.5">
+                          <span className="text-base font-extrabold flex items-center gap-1.5">👥 {index + 1}조</span>
+                          <span className="text-xs font-bold px-2.5 py-1 bg-white/80 rounded-full border border-black/5 text-slate-700">{group.length}명 짝</span>
                         </div>
-                        <div class="flex flex-wrap gap-2">
+                        <div className="flex flex-wrap gap-2">
                           {group.map((member, mIdx) => (
-                            <div key={mIdx} class="px-3.5 py-2 bg-white rounded-xl shadow-sm border border-black/5 font-bold text-slate-800 flex items-center gap-1.5 text-sm animate-popIn" style={{animationDelay: `${mIdx * 80}ms`}}>
-                              <span class="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span>
+                            <div key={mIdx} className="px-3.5 py-2 bg-white rounded-xl shadow-sm border border-black/5 font-bold text-slate-800 flex items-center gap-1.5 text-sm animate-popIn" style={{animationDelay: `${mIdx * 80}ms`}}>
+                              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span>
                               {member}
                             </div>
                           ))}
@@ -718,19 +714,19 @@
 
             {/* 세션 히스토리 */}
             {history.length > 0 && !isShuffling && (
-              <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-5 md:p-6 animate-fadeIn">
-                <h3 class="text-sm font-bold text-slate-600 mb-4 flex items-center gap-1.5">
+              <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-5 md:p-6 animate-fadeIn">
+                <h3 className="text-sm font-bold text-slate-600 mb-4 flex items-center gap-1.5">
                   <Icon name="history" className="text-indigo-500" />
                   최근 매칭 내역
                 </h3>
-                <div class="flex flex-col gap-2">
+                <div className="flex flex-col gap-2">
                   {history.map((item, index) => (
-                    <div key={item.id} class="flex items-center justify-between p-3 rounded-xl bg-slate-50 border border-slate-100 text-sm">
-                      <div class="flex items-center gap-3">
-                        <span class="text-xs font-bold text-slate-400 bg-slate-200 px-2 py-0.5 rounded-md">#{history.length - index}</span>
-                        <span class="font-semibold text-slate-700">총 {item.total}명 ({item.comboDesc})</span>
+                    <div key={item.id} className="flex items-center justify-between p-3 rounded-xl bg-slate-50 border border-slate-100 text-sm">
+                      <div className="flex items-center gap-3">
+                        <span className="text-xs font-bold text-slate-400 bg-slate-200 px-2 py-0.5 rounded-md">#{history.length - index}</span>
+                        <span className="font-semibold text-slate-700">총 {item.total}명 ({item.comboDesc})</span>
                       </div>
-                      <button onClick={() => setGroups(item.data)} class="text-xs bg-white text-indigo-600 hover:bg-indigo-50 border border-indigo-200 px-3 py-1.5 rounded-lg font-bold cursor-pointer transition-all">다시보기</button>
+                      <button onClick={() => setGroups(item.data)} className="text-xs bg-white text-indigo-600 hover:bg-indigo-50 border border-indigo-200 px-3 py-1.5 rounded-lg font-bold cursor-pointer transition-all">다시보기</button>
                     </div>
                   ))}
                 </div>
@@ -738,9 +734,9 @@
             )}
           </main>
 
-          <footer class="bg-slate-100 border-t border-slate-200 mt-12 py-6 text-center text-xs text-slate-500">
-            <p class="font-semibold text-slate-600">전도짝만들기 - 믿음의 소중한 동역 매칭 👥</p>
-            <p class="mt-1">© 2026 전도짝메이커. 모든 대원들의 소중하고 값진 믿음의 교제를 늘 응원합니다.</p>
+          <footer className="bg-slate-100 border-t border-slate-200 mt-12 py-6 text-center text-xs text-slate-500">
+            <p className="font-semibold text-slate-600">전도짝만들기 - 믿음의 소중한 동역 매칭 👥</p>
+            <p className="mt-1">© 2026 전도짝메이커. 모든 대원들의 소중하고 값진 믿음의 교제를 늘 응원합니다.</p>
           </footer>
         </div>
       );
@@ -751,5 +747,3 @@
   </script>
 </body>
 </html>
-
-```
